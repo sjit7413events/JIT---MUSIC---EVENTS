@@ -11,7 +11,7 @@
 // BOOKING FORM
 // ===============================
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsUnskLuH9FY3oIP7eN_d3SmOJMf-PAmadiqKPANVHYQh6JTNODCkJ6rBlpS2h23EkRg/exec";
+const SCRIPT_URL = https://script.google.com/macros/s/AKfycbwekycZpKhVRy1JFsLTDHvHWmKpZ8VJOULdAUZwG4aQv7SffbwnyOyHFA_X9en8Q-SROw/exec
 
 const form = document.getElementById("bookingForm");
 
