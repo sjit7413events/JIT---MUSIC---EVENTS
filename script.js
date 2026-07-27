@@ -3,780 +3,698 @@
 // COMPLETE SCRIPT.JS
 // ===============================
 
-// Google Apps Script URL
+// ===============================
+// GOOGLE APPS SCRIPT URL
+// ===============================
 
-
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwekycZpKhVRy1JFsLTDHvHWmKpZ8VJOULdAUZwG4aQv7SffbwnyOyHFA_X9en8Q-SROw/exec";
 
 // ===============================
 // BOOKING FORM
 // ===============================
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwekycZpKhVRy1JFsLTDHvHWmKpZ8VJOULdAUZwG4aQv7SffbwnyOyHFA_X9en8Q-SROw/exec";
-
 const form = document.getElementById("bookingForm");
 
-if(form){
+if (form) {
 
-form.addEventListener("submit",function(e){
+    form.addEventListener("submit", async function (e) {
 
-e.preventDefault();
+        e.preventDefault();
 
-const data={
+        const submitBtn = form.querySelector('button[type="submit"]');
 
-name:form.elements[0].value,
-mobile:form.elements[1].value,
-email:form.elements[2].value,
-event:form.elements[3].value,
-date:form.elements[4].value,
-time:form.elements[5].value,
-venue:form.elements[6].value,
-city:form.elements[7].value,
-budget:"",
-message:form.elements[8].value
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = "Submitting...";
+        }
 
-};
+        const data = {
 
-fetch(SCRIPT_URL,{
+            name: form.elements[0].value,
+            mobile: form.elements[1].value,
+            email: form.elements[2].value,
+            event: form.elements[3].value,
+            date: form.elements[4].value,
+            time: form.elements[5].value,
+            venue: form.elements[6].value,
+            city: form.elements[7].value,
+            budget: "",
+            message: form.elements[8].value
 
-method:"POST",
+        };
 
-headers:{
-"Content-Type":"application/json"
-},
+        try {
 
-body:JSON.stringify(data)
+            const response = await fetch(SCRIPT_URL, {
 
-})
+                method: "POST",
 
-.then(res=>res.text())
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-.then(result=>{
+                body: JSON.stringify(data)
 
-if(result.trim()=="SUCCESS"){
+            });
 
-alert("✅ Booking Submitted Successfully!");
+            const result = await response.text();
 
-form.reset();
+            if (result.trim() === "SUCCESS") {
 
-}else{
+                alert("✅ Booking Submitted Successfully!");
 
-alert(result);
+                form.reset();
+
+            } else {
+
+                alert(result);
+
+            }
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert("❌ " + err.message);
+
+        }
+
+        if (submitBtn) {
+
+            submitBtn.disabled = false;
+
+            submitBtn.innerHTML = "Book Now";
+
+        }
+
+    });
 
 }
-
-})
-
-.catch(err=>{
-
-console.log(err);
-
-alert("❌ "+err.message);
-
-});
-
-});
-
-}
-
 // ===============================
 // LOADER
 // ===============================
 
-window.addEventListener("load",()=>{
+window.addEventListener("load", () => {
 
-setTimeout(()=>{
+    const loader = document.getElementById("loader");
 
-const loader=document.getElementById("loader");
+    if (loader) {
 
-if(loader){
+        setTimeout(() => {
 
-loader.style.opacity="0";
+            loader.style.opacity = "0";
 
-setTimeout(()=>{
+            setTimeout(() => {
 
-loader.style.display="none";
+                loader.style.display = "none";
 
-},700);
+            }, 700);
 
-}
+        }, 1200);
 
-},1200);
+    }
 
 });
-
 
 
 // ===============================
 // HERO SLIDER
 // ===============================
 
-const hero=document.querySelector(".hero");
+const hero = document.querySelector(".hero");
 
-const heroImages=[
+const heroImages = [
 
-"https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1920",
-
-"https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920",
-
-"https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=1920",
-
-"https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1920"
+    "images/hero.jpg",
+    "images/hero2.jpg",
+    "images/hero3.jpg",
+    "images/hero4.jpg"
 
 ];
 
-let current=0;
+let currentHero = 0;
 
-function heroSlider(){
+function heroSlider() {
 
-if(!hero) return;
+    if (!hero) return;
 
-hero.style.backgroundImage=
+    hero.style.transition = "background-image 1s ease-in-out";
 
-`linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.72)),url('${heroImages[current]}')`;
+    hero.style.backgroundImage =
+        `linear-gradient(rgba(0,0,0,.70),rgba(0,0,0,.70)),url('${heroImages[currentHero]}')`;
 
-current++;
+    currentHero++;
 
-if(current>=heroImages.length){
+    if (currentHero >= heroImages.length) {
 
-current=0;
+        currentHero = 0;
+
+    }
 
 }
 
+if (hero) {
+
+    heroSlider();
+
+    setInterval(heroSlider, 5000);
+
 }
 
-heroSlider();
 
-setInterval(heroSlider,5000);
+// ===============================
+// PRELOAD HERO IMAGES
+// ===============================
 
+heroImages.forEach(src => {
+
+    const img = new Image();
+
+    img.src = src;
+
+});
 
 
 // ===============================
 // MOBILE MENU
 // ===============================
 
-const menu=document.querySelector(".menu-toggle");
+const menu = document.querySelector(".menu-toggle");
 
-const nav=document.querySelector(".navbar");
+const nav = document.querySelector(".navbar");
 
-if(menu){
+if (menu && nav) {
 
-menu.onclick=()=>{
+    menu.addEventListener("click", () => {
 
-nav.classList.toggle("active");
+        nav.classList.toggle("active");
 
-};
+    });
 
 }
-
 
 
 // ===============================
 // HEADER EFFECT
 // ===============================
 
-window.addEventListener("scroll",()=>{
+const header = document.querySelector(".header");
 
-const header=document.querySelector(".header");
+window.addEventListener("scroll", () => {
 
-if(window.scrollY>80){
+    if (!header) return;
 
-header.style.background="#000";
+    if (window.scrollY > 80) {
 
-header.style.boxShadow="0 15px 40px rgba(0,0,0,.45)";
+        header.style.background = "#000";
 
-}else{
+        header.style.boxShadow = "0 15px 40px rgba(0,0,0,.45)";
 
-header.style.background="rgba(0,0,0,.45)";
+    } else {
 
-header.style.boxShadow="none";
+        header.style.background = "rgba(0,0,0,.45)";
+
+        header.style.boxShadow = "none";
+
+    }
+
+});
+// ===============================
+// REVEAL ANIMATION
+// ===============================
+
+const reveals = document.querySelectorAll("section");
+
+function revealSections() {
+
+    reveals.forEach(section => {
+
+        const top = section.getBoundingClientRect().top;
+
+        if (top < window.innerHeight - 120) {
+
+            section.classList.add("active");
+
+        }
+
+    });
 
 }
 
-});
+reveals.forEach(section => {
 
-
-
-// ===============================
-// REVEAL
-// ===============================
-
-const reveals=document.querySelectorAll("section");
-
-window.addEventListener("scroll",()=>{
-
-reveals.forEach(sec=>{
-
-const top=sec.getBoundingClientRect().top;
-
-if(top<window.innerHeight-120){
-
-sec.classList.add("active");
-
-}
+    section.classList.add("reveal");
 
 });
 
-});
-
-reveals.forEach(sec=>{
-
-sec.classList.add("reveal");
-
-});
-
+window.addEventListener("scroll", revealSections);
+window.addEventListener("load", revealSections);
 
 
 // ===============================
 // COUNTER
 // ===============================
 
-const counters=document.querySelectorAll(".counter-box h2");
+const counterSection = document.querySelector(".counter");
+const counters = document.querySelectorAll(".counter-box h2");
 
-let started=false;
+let counterStarted = false;
 
-window.addEventListener("scroll",()=>{
+function runCounter() {
 
-const counter=document.querySelector(".counter");
+    counters.forEach(counter => {
 
-if(!counter) return;
+        const target = parseInt(counter.textContent);
 
-const top=counter.offsetTop-500;
+        if (isNaN(target)) return;
 
-if(window.scrollY>top && !started){
+        let count = 0;
+        const speed = Math.max(1, target / 120);
 
-started=true;
+        function update() {
 
-runCounter();
+            count += speed;
+
+            if (count < target) {
+
+                counter.textContent = Math.floor(count) + "+";
+                requestAnimationFrame(update);
+
+            } else {
+
+                counter.textContent = target + "+";
+
+            }
+
+        }
+
+        update();
+
+    });
 
 }
+
+window.addEventListener("scroll", () => {
+
+    if (!counterSection || counterStarted) return;
+
+    if (window.scrollY > counterSection.offsetTop - 500) {
+
+        counterStarted = true;
+        runCounter();
+
+    }
 
 });
 
-function runCounter(){
-
-counters.forEach(counter=>{
-
-const target=parseInt(counter.innerText);
-
-let count=0;
-
-const speed=target/120;
-
-function update(){
-
-count+=speed;
-
-if(count<target){
-
-counter.innerText=Math.floor(count)+"+";
-
-requestAnimationFrame(update);
-
-}else{
-
-counter.innerText=target+"+";
-
-}
-
-}
-
-update();
-
-});
-
-}
-
-
 
 // ===============================
-// CURSOR
-// ===============================
-
-const cursor=document.querySelector(".cursor");
-
-if(cursor){
-
-document.addEventListener("mousemove",e=>{
-
-cursor.style.left=e.clientX+"px";
-
-cursor.style.top=e.clientY+"px";
-
-});
-
-}
-// ===============================
-// PREMIUM EXTRA FEATURES
-// ADD THIS AT THE END OF script.js
-// ===============================
-
-
-
 // ACTIVE NAVBAR
+// ===============================
 
-const sections=document.querySelectorAll("section");
-const navLinks=document.querySelectorAll(".navbar a");
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll(".navbar a");
 
-window.addEventListener("scroll",()=>{
+window.addEventListener("scroll", () => {
 
-let current="";
+    let current = "";
 
-sections.forEach(sec=>{
+    sections.forEach(section => {
 
-const top=window.scrollY;
-const offset=sec.offsetTop-150;
-const height=sec.offsetHeight;
+        const top = window.scrollY;
+        const offset = section.offsetTop - 150;
+        const height = section.offsetHeight;
 
-if(top>=offset && top<offset+height){
+        if (top >= offset && top < offset + height) {
 
-current=sec.getAttribute("id");
+            current = section.id;
+
+        }
+
+    });
+
+    navLinks.forEach(link => {
+
+        link.classList.remove("active");
+
+        if (link.getAttribute("href") === "#" + current) {
+
+            link.classList.add("active");
+
+        }
+
+    });
+
+});
+
+
+// ===============================
+// AUTO CLOSE MOBILE MENU
+// ===============================
+
+navLinks.forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        if (nav) {
+
+            nav.classList.remove("active");
+
+        }
+
+    });
+
+});
+// ===============================
+// CUSTOM CURSOR
+// ===============================
+
+const cursor = document.querySelector(".cursor");
+
+if (cursor) {
+
+    document.addEventListener("mousemove", (e) => {
+
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+
+    });
 
 }
 
-});
 
-navLinks.forEach(link=>{
+// ===============================
+// GALLERY HOVER EFFECT
+// ===============================
 
-link.classList.remove("active");
+document.querySelectorAll(".gallery-item img").forEach(img => {
 
-if(link.getAttribute("href")=="#"+current){
+    img.addEventListener("mouseenter", () => {
 
-link.classList.add("active");
+        img.style.transform = "scale(1.08)";
+        img.style.transition = "0.4s";
 
-}
+    });
 
-});
+    img.addEventListener("mouseleave", () => {
 
-});
+        img.style.transform = "scale(1)";
 
-
-
-
-// CLOSE MENU AFTER CLICK
-
-navLinks.forEach(link=>{
-
-link.addEventListener("click",()=>{
-
-if(nav){
-
-nav.classList.remove("active");
-
-}
-
-});
+    });
 
 });
 
 
+// ===============================
+// GALLERY IMAGE POPUP
+// ===============================
 
+document.querySelectorAll(".gallery-item img").forEach(img => {
 
-// IMAGE HOVER EFFECT
+    img.addEventListener("click", () => {
 
-const gallery=document.querySelectorAll(".gallery-item img");
+        const overlay = document.createElement("div");
 
-gallery.forEach(img=>{
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.background = "rgba(0,0,0,.9)";
+        overlay.style.display = "flex";
+        overlay.style.justifyContent = "center";
+        overlay.style.alignItems = "center";
+        overlay.style.zIndex = "999999";
 
-img.addEventListener("mouseover",()=>{
+        const image = document.createElement("img");
 
-img.style.transform="scale(1.15) rotate(2deg)";
+        image.src = img.src;
+        image.style.maxWidth = "90%";
+        image.style.maxHeight = "90%";
+        image.style.borderRadius = "20px";
+
+        overlay.appendChild(image);
+
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener("click", () => {
+
+            overlay.remove();
+
+        });
+
+    });
 
 });
 
-img.addEventListener("mouseout",()=>{
 
-img.style.transform="scale(1) rotate(0deg)";
-
-});
-
-});
-
-
-
-
+// ===============================
 // SCROLL TO TOP BUTTON
+// ===============================
 
-const topBtn=document.createElement("div");
+const topBtn = document.createElement("div");
 
-topBtn.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
-
-topBtn.className="topBtn";
+topBtn.className = "topBtn";
+topBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
 
 document.body.appendChild(topBtn);
 
-window.addEventListener("scroll",()=>{
+window.addEventListener("scroll", () => {
 
-if(window.scrollY>500){
+    if (window.scrollY > 500) {
 
-topBtn.style.display="flex";
+        topBtn.style.display = "flex";
 
-}else{
+    } else {
 
-topBtn.style.display="none";
+        topBtn.style.display = "none";
 
-}
-
-});
-
-topBtn.onclick=()=>{
-
-window.scrollTo({
-
-top:0,
-
-behavior:"smooth"
+    }
 
 });
 
-};
+topBtn.addEventListener("click", () => {
+
+    window.scrollTo({
+
+        top: 0,
+        behavior: "smooth"
+
+    });
+
+});
 
 
-
-
+// ===============================
 // BUTTON RIPPLE EFFECT
-
-const buttons=document.querySelectorAll("button,.btn-primary,.btn-secondary");
-
-buttons.forEach(btn=>{
-
-btn.addEventListener("click",function(e){
-
-const ripple=document.createElement("span");
-
-const rect=this.getBoundingClientRect();
-
-ripple.style.left=e.clientX-rect.left+"px";
-
-ripple.style.top=e.clientY-rect.top+"px";
-
-ripple.className="ripple";
-
-this.appendChild(ripple);
-
-setTimeout(()=>{
-
-ripple.remove();
-
-},600);
-
-});
-
-});
-
-
-
-
-// PRELOAD HERO IMAGES
-
-heroImages.forEach(src=>{
-
-const img=new Image();
-
-img.src=src;
-
-});
-
-
-
-
-// DISABLE RIGHT CLICK (OPTIONAL)
-
-document.addEventListener("contextmenu",e=>{
-
-e.preventDefault();
-
-});
-
-
-
-
-// DISABLE F12 (OPTIONAL)
-
-document.onkeydown=function(e){
-
-if(e.keyCode==123){
-
-return false;
-
-}
-
-};
-// ===============================
-// FINAL IMPROVEMENTS
-// ADD THIS AT THE END OF script.js
 // ===============================
 
+document.querySelectorAll("button,.btn-primary,.btn-secondary").forEach(btn => {
 
+    btn.addEventListener("click", function (e) {
 
-// Smooth Fade Between Hero Images
+        const ripple = document.createElement("span");
 
-hero.style.transition = "background-image 1s ease-in-out";
+        const rect = this.getBoundingClientRect();
 
+        ripple.className = "ripple";
 
+        ripple.style.left = (e.clientX - rect.left) + "px";
+        ripple.style.top = (e.clientY - rect.top) + "px";
 
-// Lazy Loading Images
+        this.appendChild(ripple);
 
-document.querySelectorAll("img").forEach(img=>{
+        setTimeout(() => {
 
-img.loading="lazy";
+            ripple.remove();
 
+        }, 600);
+
+    });
+
+});
+// ===============================
+// LAZY LOAD ALL IMAGES
+// ===============================
+
+document.querySelectorAll("img").forEach(img => {
+    img.loading = "lazy";
 });
 
 
+// ===============================
+// COPYRIGHT YEAR
+// ===============================
 
-// Current Year
+const copyright = document.querySelector(".copyright");
 
-const year=document.querySelector(".copyright");
+if (copyright) {
 
-if(year){
-
-year.innerHTML=`© ${new Date().getFullYear()} JIT MUSIC EVENT | All Rights Reserved.`;
+    copyright.innerHTML =
+        `© ${new Date().getFullYear()} JIT MUSIC EVENT | All Rights Reserved.`;
 
 }
 
 
+// ===============================
+// FLOATING CARD EFFECT
+// ===============================
 
-// Navbar Close Outside Click
+document.querySelectorAll(
+".service-card,.why-card,.testimonial-card"
+).forEach(card => {
 
-document.addEventListener("click",(e)=>{
+    card.addEventListener("mouseenter", () => {
 
-if(nav && menu){
+        card.style.transform = "translateY(-10px)";
+        card.style.transition = ".35s";
 
-if(!nav.contains(e.target) && !menu.contains(e.target)){
+    });
 
-nav.classList.remove("active");
+    card.addEventListener("mouseleave", () => {
 
-}
+        card.style.transform = "translateY(0)";
 
-}
-
-});
-
-
-
-// Hover Sound (Optional)
-
-const hoverButtons=document.querySelectorAll(".btn-primary,.btn-secondary");
-
-hoverButtons.forEach(btn=>{
-
-btn.addEventListener("mouseenter",()=>{
-
-btn.style.transform="translateY(-5px) scale(1.03)";
-
-});
-
-btn.addEventListener("mouseleave",()=>{
-
-btn.style.transform="translateY(0) scale(1)";
-
-});
+    });
 
 });
 
 
+// ===============================
+// PAGE FADE IN
+// ===============================
 
-// Gallery Click Zoom
+window.addEventListener("load", () => {
 
-document.querySelectorAll(".gallery-item img").forEach(img=>{
+    document.body.style.opacity = "0";
+    document.body.style.transition = "opacity .8s";
 
-img.addEventListener("click",()=>{
+    setTimeout(() => {
 
-const overlay=document.createElement("div");
+        document.body.style.opacity = "1";
 
-overlay.style.position="fixed";
-
-overlay.style.top="0";
-
-overlay.style.left="0";
-
-overlay.style.width="100%";
-
-overlay.style.height="100%";
-
-overlay.style.background="rgba(0,0,0,.9)";
-
-overlay.style.display="flex";
-
-overlay.style.justifyContent="center";
-
-overlay.style.alignItems="center";
-
-overlay.style.zIndex="999999";
-
-const image=document.createElement("img");
-
-image.src=img.src;
-
-image.style.maxWidth="90%";
-
-image.style.maxHeight="90%";
-
-image.style.borderRadius="20px";
-
-overlay.appendChild(image);
-
-document.body.appendChild(overlay);
-
-overlay.onclick=()=>{
-
-overlay.remove();
-
-};
-
-});
+    }, 100);
 
 });
 
 
+// ===============================
+// CLOSE MENU OUTSIDE CLICK
+// ===============================
 
-// Console Branding
+document.addEventListener("click", (e) => {
+
+    if (menu && nav) {
+
+        if (!nav.contains(e.target) &&
+            !menu.contains(e.target)) {
+
+            nav.classList.remove("active");
+
+        }
+
+    }
+
+});
+
+
+// ===============================
+// SMOOTH SCROLL
+// ===============================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+    anchor.addEventListener("click", function (e) {
+
+        const target =
+            document.querySelector(this.getAttribute("href"));
+
+        if (!target) return;
+
+        e.preventDefault();
+
+        target.scrollIntoView({
+
+            behavior: "smooth",
+            block: "start"
+
+        });
+
+    });
+
+});
+
+
+// ===============================
+// CONSOLE BRANDING
+// ===============================
 
 console.clear();
 
-console.log("%cJIT MUSIC EVENT","font-size:28px;color:#f4b400;font-weight:bold;");
+console.log(
+"%cJIT MUSIC EVENT",
+"font-size:28px;color:#f4b400;font-weight:bold;"
+);
 
-console.log("%cDeveloped with ❤️","font-size:16px;color:white;");
+console.log(
+"%cDeveloped by JIT MUSIC EVENT",
+"font-size:15px;color:#00d4ff;"
+);
 
 
+// ===============================
+// WEBSITE READY
+// ===============================
 
-// Performance
-
-window.history.scrollRestoration="manual";
-
-
-
-// End
-
+console.log("====================================");
 console.log("Website Loaded Successfully 🚀");
+console.log("Booking Form      ✓");
+console.log("Hero Slider       ✓");
+console.log("Gallery           ✓");
+console.log("Counter           ✓");
+console.log("Navbar            ✓");
+console.log("Responsive        ✓");
+console.log("Google Sheets     ✓");
+console.log("====================================");
 // ===============================
-// FINAL TOUCHES
-// ADD THIS AT THE END OF script.js
+// WHATSAPP FLOAT BUTTON
 // ===============================
 
+const whatsapp = document.createElement("a");
 
-// Disable submit button while submitting
+whatsapp.href = "https://wa.me/919999999999"; // अपना नंबर डालो
+whatsapp.target = "_blank";
+whatsapp.className = "whatsapp-btn";
+whatsapp.innerHTML = '<i class="fa-brands fa-whatsapp"></i>';
 
-if(form){
-
-form.addEventListener("submit",()=>{
-
-const btn=form.querySelector("button");
-
-btn.disabled=true;
-
-btn.innerHTML="Submitting...";
-
-setTimeout(()=>{
-
-btn.disabled=false;
-
-btn.innerHTML="Book Now";
-
-},3000);
-
-});
-
-}
+document.body.appendChild(whatsapp);
 
 
+// ===============================
+// CALL BUTTON
+// ===============================
 
-// Fade In Page
+const callBtn = document.createElement("a");
 
-document.body.style.opacity="0";
+callBtn.href = "tel:+919999999999"; // अपना नंबर डालो
+callBtn.className = "call-btn";
+callBtn.innerHTML = '<i class="fa-solid fa-phone"></i>';
 
-window.addEventListener("load",()=>{
-
-document.body.style.transition="opacity .8s";
-
-document.body.style.opacity="1";
-
-});
-
+document.body.appendChild(callBtn);
 
 
-// Auto Close Mobile Menu
+// ===============================
+// HIDE LOADER IF ANY ERROR
+// ===============================
 
-document.querySelectorAll(".navbar a").forEach(link=>{
+window.onerror = function () {
 
-link.onclick=()=>{
+    const loader = document.getElementById("loader");
 
-if(nav){
+    if (loader) {
 
-nav.classList.remove("active");
+        loader.style.display = "none";
 
-}
+    }
 
 };
-
-});
-
-
-
-// Floating Animation
-
-document.querySelectorAll(".service-card,.why-card,.testimonial-card").forEach(card=>{
-
-card.addEventListener("mouseenter",()=>{
-
-card.style.transform="translateY(-12px)";
-
-});
-
-card.addEventListener("mouseleave",()=>{
-
-card.style.transform="translateY(0px)";
-
-});
-
-});
-
-
-
-// Animate Numbers Once
-
-let counted=false;
-
-window.addEventListener("scroll",()=>{
-
-const counter=document.querySelector(".counter");
-
-if(counter){
-
-if(window.scrollY>counter.offsetTop-500 && !counted){
-
-counted=true;
-
-runCounter();
-
-}
-
-}
-
-});
-
-
-
-// Welcome Message
-
-setTimeout(()=>{
-
-console.log("Welcome To JIT MUSIC EVENT");
-
-},1000);
-
-
-
-// Website Ready
-
-console.log("========== WEBSITE READY ==========");
-
-console.log("Hero Slider  ✓");
-console.log("Booking Form ✓");
-console.log("Gallery      ✓");
-console.log("Counter      ✓");
-console.log("Testimonials ✓");
-console.log("WhatsApp     ✓");
-console.log("Responsive   ✓");
-console.log("Google Sheet ✓");
-console.log("==================================");
