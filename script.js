@@ -4,7 +4,6 @@
 // ===============================
 
 // Google Apps Script URL
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGT7pEpFZQCKXgv_jwaPpPen38k3erxYB5DVdLKhjIwNTG7vjGYHToGcKYhNoIoeDegw/exec";
 
 
 
