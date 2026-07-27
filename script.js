@@ -12,6 +12,8 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGT7pEpFZQCKXgv_jwa
 // BOOKING FORM
 // ===============================
 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsUnskLuH9FY3oIP7eN_d3SmOJMf-PAmadiqKPANVHYQh6JTNODCkJ6rBlpS2h23EkRg/exec";
+
 const form = document.getElementById("bookingForm");
 
 if(form){
@@ -38,33 +40,44 @@ message:form.elements[8].value
 fetch(SCRIPT_URL,{
 
 method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
 body:JSON.stringify(data)
 
 })
 
-.then(res=>res.json())
+.then(res=>res.text())
 
 .then(result=>{
 
-alert("🎉 Booking Submitted Successfully!");
+if(result.trim()=="SUCCESS"){
+
+alert("✅ Booking Submitted Successfully!");
 
 form.reset();
+
+}else{
+
+alert(result);
+
+}
 
 })
 
 .catch(err=>{
 
-alert("❌ Something Went Wrong!");
-
 console.log(err);
+
+alert("❌ "+err.message);
 
 });
 
 });
 
 }
-
-
 
 // ===============================
 // LOADER
